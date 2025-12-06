@@ -1,0 +1,294 @@
+# DNS Benchmark Tool Configuration File
+# Place this file at ~/.dns-benchmark.yaml or specify with --config option
+
+# Global benchmark settings
+default:
+  # Number of queries to send to each provider
+  queries: 25
+  
+  # Timeout for each DNS query (seconds)
+  timeout: 3.0
+  
+  # Number of parallel threads for queries
+  threads: 5
+  
+  # Test domains to query (mix of popular and reliable domains)
+  domains:
+    - google.com
+    - cloudflare.com
+    - github.com
+    - stackoverflow.com
+    - wikipedia.org
+    - amazon.com
+    - netflix.com
+    - youtube.com
+  
+  # Output format: table, json, csv
+  output_format: table
+  
+  # Enable colored output in terminal
+  colors: true
+  
+  # Show detailed query results
+  verbose: false
+  
+  # Enable IPv6 DNS servers
+  ipv6: false
+
+# DNS provider configurations
+providers:
+  # Cloudflare DNS - Fastest and most privacy-focused
+  cloudflare:
+    primary: "1.1.1.1"
+    secondary: "1.0.0.1"
+    name: "Cloudflare DNS"
+    location: "Global (Anycast)"
+    privacy: "High (No logging)"
+    features: ["DNS-over-HTTPS", "DNS-over-TLS", "No logging"]
+    
+  # Google DNS - Most popular and reliable
+  google:
+    primary: "8.8.8.8"
+    secondary: "8.8.4.4"
+    name: "Google DNS"
+    location: "Global (Anycast)"
+    privacy: "Medium (Some logging)"
+    features: ["DNS-over-HTTPS", "DNS-over-TLS", "Public DNS"]
+    
+  # Quad9 - Security-focused with malware blocking
+  quad9:
+    primary: "9.9.9.9"
+    secondary: "149.112.112.112"
+    name: "Quad9"
+    location: "Global (Anycast)"
+    privacy: "High (No logging, malware blocking)"
+    features: ["Malware blocking", "DNS-over-TLS", "Privacy focused"]
+    
+  # OpenDNS - Cisco's DNS service with content filtering
+  opendns:
+    primary: "208.67.222.222"
+    secondary: "208.67.220.220"
+    name: "OpenDNS"
+    location: "Global (Anycast)"
+    privacy: "Medium (Some logging)"
+    features: ["Content filtering", "Phishing protection", "FamilyShield"]
+    
+  # AdGuard DNS - Ad-blocking by default
+  adguard:
+    primary: "94.140.14.14"
+    secondary: "94.140.15.15"
+    name: "AdGuard DNS"
+    location: "Global (Anycast)"
+    privacy: "High (No logging)"
+    features: ["Ad blocking", "Tracker blocking", "Privacy focused"]
+    
+  # CleanBrowsing - Content filtering service
+  cleanbrowsing:
+    primary: "185.228.168.9"
+    secondary: "185.228.169.9"
+    name: "CleanBrowsing"
+    location: "Global (Anycast)"
+    privacy: "High (No logging)"
+    features: ["Content filtering", "Family options", "Adult content blocker"]
+    
+  # Comodo Secure DNS - Security-focused
+  comodo:
+    primary: "8.26.56.26"
+    secondary: "8.20.247.20"
+    name: "Comodo Secure DNS"
+    location: "Global (Anycast)"
+    privacy: "Medium (Some logging)"
+    features: ["Security focused", "Domain validation", "Real-time blocking"]
+
+# Rate limiting and retry configuration
+rate_limiting:
+  # Delay between queries to same provider (seconds)
+  delay_between_queries: 0.1
+  
+  # Maximum concurrent queries per provider
+  max_concurrent: 10
+  
+  # Backoff strategy: linear, exponential
+  backoff_strategy: "exponential"
+  
+  # Maximum retry attempts for failed queries
+  max_retries: 3
+  
+  # Initial retry delay (seconds)
+  initial_retry_delay: 0.5
+  
+  # Maximum retry delay (seconds)
+  max_retry_delay: 5.0
+
+# Output and reporting options
+output:
+  # Default output format
+  format: "table"
+  
+  # Enable colored terminal output
+  colors: true
+  
+  # Show detailed information for each query
+  show_details: false
+  
+  # Include provider metadata in output
+  include_metadata: true
+  
+  # Sort providers by: overall, latency, success_rate, stability
+  sort_by: "overall"
+  
+  # Reverse sort order (highest first)
+  reverse_sort: true
+
+# Logging configuration
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  
+  # Log file path (leave empty for console only)
+  file: ""
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Rotate log files when they exceed this size (MB)
+  max_file_size: 10
+  
+  # Number of log files to keep
+  backup_count: 5
+
+# Monitoring mode settings
+monitoring:
+  # Enable continuous monitoring
+  enabled: false
+  
+  # Update interval in seconds
+  interval: 60
+  
+  # Number of samples to keep for trend analysis
+  history_size: 1440  # 24 hours at 1-minute intervals
+  
+  # Alert thresholds
+  alerts:
+    # Minimum acceptable overall score (%)
+    min_overall_score: 80
+    
+    # Maximum acceptable latency (ms)
+    max_latency: 100
+    
+    # Minimum acceptable success rate (%)
+    min_success_rate: 95
+    
+    # Minimum acceptable stability score (%)
+    min_stability: 85
+
+# Performance optimization settings
+performance:
+  # Connection pool size
+  pool_size: 20
+  
+  # Keep-alive connections
+  keep_alive: true
+  
+  # Use UDP for DNS queries (fall back to TCP if needed)
+  prefer_udp: true
+  
+  # DNS-over-HTTPS configuration
+  doh:
+    enabled: false
+    # DoH servers to use
+    servers:
+      - "https://cloudflare-dns.com/dns-query"
+      - "https://dns.google/dns-query"
+  
+  # DNS-over-TLS configuration
+  dot:
+    enabled: false
+    # DoT servers to use
+    servers:
+      - "1.1.1.1:853"
+      - "8.8.8.8:853"
+
+# Advanced options
+advanced:
+  # Custom user agent for HTTP-based DNS queries
+  user_agent: "dns-benchmark/1.0.0"
+  
+  # Network interface to use (leave empty for default)
+  network_interface: ""
+  
+  # DNS port (default: 53)
+  dns_port: 53
+  
+  # Query types to test
+  query_types:
+    - "A"      # IPv4 address
+    - "AAAA"   # IPv6 address
+    - "MX"     # Mail exchange
+    - "TXT"    # Text records
+  
+  # Cache responses for this duration (seconds)
+  cache_duration: 300
+  
+  # Validate DNS responses
+  validate_responses: true
+  
+  # Measure network jitter
+  measure_jitter: true
+
+# Preset configurations for different use cases
+presets:
+  # Optimized for gaming (lowest latency)
+  gaming:
+    queries: 50
+    timeout: 2.0
+    domains:
+      - steamcommunity.com
+      - battle.net
+      - epicgames.com
+      - riotgames.com
+      - blizzard.com
+    sort_by: "latency"
+    
+  # Optimized for streaming
+  streaming:
+    queries: 30
+    timeout: 5.0
+    domains:
+      - netflix.com
+      - youtube.com
+      - twitch.tv
+      - hulu.com
+      - disneyplus.com
+    sort_by: "stability"
+    
+  # Optimized for privacy (no-logging providers)
+  privacy:
+    providers: ["cloudflare", "quad9", "adguard"]
+    queries: 25
+    sort_by: "overall"
+    
+  # Quick test (minimal queries)
+  quick:
+    queries: 5
+    domains: ["google.com", "cloudflare.com"]
+    threads: 2
+    
+  # Comprehensive test (maximum data)
+  comprehensive:
+    queries: 100
+    domains:
+      - google.com
+      - cloudflare.com
+      - github.com
+      - stackoverflow.com
+      - wikipedia.org
+      - amazon.com
+      - netflix.com
+      - youtube.com
+      - facebook.com
+      - twitter.com
+      - instagram.com
+      - linkedin.com
+    threads: 10
+    show_details: true
