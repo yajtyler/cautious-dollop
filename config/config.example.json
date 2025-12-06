@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "providers": [
+    {
+      "name": "Google",
+      "primary_ip": "8.8.8.8",
+      "secondary_ip": "8.8.4.4",
+      "category": "public"
+    },
+    {
+      "name": "Cloudflare",
+      "primary_ip": "1.1.1.1",
+      "secondary_ip": "1.0.0.1",
+      "category": "public"
+    },
+    {
+      "name": "Local DNS",
+      "primary_ip": "192.168.1.1",
+      "category": "local"
+    }
+  ],
+  "domains": [
+    {
+      "name": "example.com",
+      "category": "general",
+      "record_type": "A"
+    },
+    {
+      "name": "google.com",
+      "category": "general",
+      "record_type": "A"
+    },
+    {
+      "name": "netflix.com",
+      "category": "streaming",
+      "record_type": "A"
+    }
+  ],
+  "benchmark": {
+    "timeout": 5.0,
+    "retries": 1,
+    "concurrent_queries": 10,
+    "iterations": 10
+  },
+  "output": {
+    "format": "json",
+    "path": "output/results",
+    "generate_plots": true,
+    "plot_format": "png"
+  }
+}
