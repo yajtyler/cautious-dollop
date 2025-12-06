@@ -1,0 +1,81 @@
+# Development dependencies for DNS Benchmark Tool
+# Includes all runtime dependencies plus development tools
+
+# Install runtime dependencies
+-r requirements.txt
+
+# Testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+pytest-xdist>=3.1.0
+pytest-benchmark>=4.0.0
+
+# Code formatting and linting
+black>=22.0.0
+isort>=5.11.0
+flake8>=5.0.0
+mypy>=0.991
+pylint>=2.15.0
+
+# Pre-commit hooks
+pre-commit>=2.20.0
+
+# Documentation
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0
+sphinx-click>=4.0.0
+myst-parser>=0.18.0
+
+# Development utilities
+twine>=4.0.0
+wheel>=0.38.0
+setuptools>=65.0.0
+build>=0.8.0
+
+# Security scanning
+bandit>=1.7.0
+safety>=2.3.0
+
+# Performance profiling
+memory-profiler>=0.60.0
+line-profiler>=4.0.0
+py-spy>=0.3.0
+
+# Debugging
+ipdb>=0.13.0
+pdbpp>=0.10.0
+
+# IDE support
+ipython>=8.7.0
+jupyter>=1.0.0
+
+# Release management
+bump2version>=1.0.0
+changelog>=0.3.0
+
+# Dependency management
+pip-tools>=6.12.0
+pipdeptree>=2.2.0
+
+# Mock services for testing
+responses>=0.22.0
+faker>=16.6.0
+
+# Coverage reporting
+coverage>=7.0.0
+codecov>=2.1.0
+
+# Build tools
+tox>=4.0.0
+nox>=2022.11.0
+
+# Documentation improvements
+docformatter>=1.5.0
+autoflake>=2.0.0
+
+# Type checking extensions
+types-PyYAML>=6.0.0
+types-requests>=2.28.0
+types-setuptools>=65.0.0
