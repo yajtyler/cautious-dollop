@@ -10,6 +10,7 @@ from dns_bench import __version__
 from dns_bench.benchmark import run_benchmark
 from dns_bench.config.loader import ConfigLoader
 from dns_bench.core.di import ServiceContainer
+from dns_bench.results import display_results
 
 console = Console()
 
@@ -137,28 +138,11 @@ def run(
             iterations=iterations,
         )
 
-        if verbose or results:
-            table = Table(title="DNS Benchmark Results")
-            table.add_column("Provider", style="cyan")
-            table.add_column("Domain", style="magenta")
-            table.add_column("Latency (ms)", style="green")
-            table.add_column("Status", style="yellow")
-            table.add_column("Error", style="red")
-
-            for result in results:
-                status = "✓ Success" if result["success"] else "✗ Failed"
-                error_msg = result["error"] or "-"
-                table.add_row(
-                    result["provider"],
-                    result["domain"],
-                    f"{result['latency_ms']:.2f}",
-                    status,
-                    error_msg,
-                )
-
-            console.print(table)
+        if results:
+            display_results(results, console=console)
 
             if verbose:
+                console.print()
                 console.print(f"[green]Completed {len(results)} total queries[/green]")
 
     except Exception as e:
