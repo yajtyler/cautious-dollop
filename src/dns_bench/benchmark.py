@@ -1,6 +1,7 @@
 """DNS benchmarking engine for performance testing."""
 
 import time
+import concurrent.futures
 from dataclasses import asdict, dataclass
 from typing import List, Optional
 
@@ -105,16 +106,33 @@ class BenchmarkRunner:
         """
         results: List[BenchmarkResult] = []
 
-        for provider in self.providers:
-            for domain in self.domains:
-                for _ in range(self.iterations):
-                    latency_ms, success, error = self._query_dns(provider, domain)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_meta = {}
+            for provider in self.providers:
+                for domain in self.domains:
+                    for _ in range(self.iterations):
+                        future = executor.submit(self._query_dns, provider, domain)
+                        future_to_meta[future] = (provider, domain)
+
+            for future in concurrent.futures.as_completed(future_to_meta):
+                provider, domain = future_to_meta[future]
+                try:
+                    latency_ms, success, error = future.result()
                     result = BenchmarkResult(
                         provider=provider,
                         domain=domain,
                         latency_ms=latency_ms,
                         success=success,
                         error=error,
+                    )
+                    results.append(result)
+                except Exception as exc:
+                    result = BenchmarkResult(
+                        provider=provider,
+                        domain=domain,
+                        latency_ms=0.0,
+                        success=False,
+                        error=f"Unexpected error: {exc}",
                     )
                     results.append(result)
 
