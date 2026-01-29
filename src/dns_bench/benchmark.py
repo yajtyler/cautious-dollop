@@ -63,7 +63,9 @@ class BenchmarkRunner:
             - success: True if query succeeded, False otherwise
             - error_message: Error message if query failed, None if successful
         """
-        resolver = dns.resolver.Resolver()
+        # Initialize resolver with configure=False to skip reading system configuration
+        # (e.g. /etc/resolv.conf) for performance. We set nameservers manually.
+        resolver = dns.resolver.Resolver(configure=False)
         resolver.nameservers = [provider_ip]
         resolver.timeout = self.timeout
         resolver.lifetime = self.timeout
