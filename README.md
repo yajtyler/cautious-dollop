@@ -7,9 +7,7 @@ A comprehensive DNS resolver benchmarking tool with support for multiple provide
 - **Multi-Provider Support**: Benchmark against multiple DNS providers (Google, Cloudflare, Quad9, OpenDNS, Verisign, and custom)
 - **Domain Pool Management**: Configure domain categories for realistic benchmarking scenarios
 - **Concurrent Execution**: Efficient async/concurrent query execution
-- **Data Analysis**: Pandas-based result analysis and aggregation
-- **Visualizations**: matplotlib and plotext for result visualization
-- **CLI Interface**: Rich, user-friendly command-line interface with Typer
+- **CLI Interface**: Rich, user-friendly command-line interface with Click
 - **Configuration Management**: YAML/JSON configuration support
 - **Testing**: Comprehensive test suite with pytest
 
@@ -89,8 +87,6 @@ benchmark:
 output:
   format: "json|csv|text"
   path: "output/results"
-  generate_plots: true
-  plot_format: "png|pdf|svg"
 ```
 
 ### Example Providers
@@ -162,12 +158,9 @@ python -m dns_bench --verbose
 ### Core Dependencies
 
 - **dnspython**: DNS protocol implementation
-- **typer**: Modern CLI framework
+- **click**: Modern CLI framework
 - **rich**: Terminal formatting
 - **aiohttp**: Async HTTP client
-- **pandas**: Data manipulation and analysis
-- **matplotlib**: Plotting library
-- **plotext**: Terminal plotting
 - **pydantic**: Data validation
 - **pyyaml**: YAML parsing
 

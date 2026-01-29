@@ -3,8 +3,6 @@
 from unittest.mock import MagicMock, mock_open, patch
 import subprocess
 
-import pytest
-
 from dns_bench.resolver import (
     _deduplicate_resolvers,
     _is_valid_ip,

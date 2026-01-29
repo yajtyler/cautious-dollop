@@ -4,7 +4,6 @@ from pathlib import Path
 
 import click
 from rich.console import Console
-from rich.table import Table
 
 from dns_bench import __version__
 from dns_bench.benchmark import run_benchmark
