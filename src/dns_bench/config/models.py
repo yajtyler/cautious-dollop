@@ -7,33 +7,35 @@ from pydantic import BaseModel, ConfigDict, Field
 class DNSProvider(BaseModel):
     """DNS Provider configuration."""
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "name": "Google",
-            "primary_ip": "8.8.8.8",
-            "secondary_ip": "8.8.4.4",
-            "category": "public",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Google",
+                "primary_ip": "8.8.8.8",
+                "secondary_ip": "8.8.4.4",
+                "category": "public",
+            }
         }
-    })
+    )
 
     name: str = Field(..., description="Provider name (e.g., Google, Cloudflare)")
     primary_ip: str = Field(..., description="Primary IP address")
     secondary_ip: Optional[str] = Field(None, description="Secondary IP address")
-    category: str = Field(
-        "public", description="Provider category (public, enterprise, local)"
-    )
+    category: str = Field("public", description="Provider category (public, enterprise, local)")
 
 
 class Domain(BaseModel):
     """Domain configuration for benchmarking."""
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "name": "example.com",
-            "category": "general",
-            "record_type": "A",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "example.com",
+                "category": "general",
+                "record_type": "A",
+            }
         }
-    })
+    )
 
     name: str = Field(..., description="Domain name to query")
     category: str = Field("general", description="Domain category (general, cdn, streaming)")
@@ -43,14 +45,16 @@ class Domain(BaseModel):
 class BenchmarkConfig(BaseModel):
     """Benchmark execution configuration."""
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "timeout": 5.0,
-            "retries": 1,
-            "concurrent_queries": 10,
-            "iterations": 10,
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "timeout": 5.0,
+                "retries": 1,
+                "concurrent_queries": 10,
+                "iterations": 10,
+            }
         }
-    })
+    )
 
     timeout: float = Field(5.0, description="Query timeout in seconds")
     retries: int = Field(1, description="Number of retries per query")
@@ -61,19 +65,17 @@ class BenchmarkConfig(BaseModel):
 class OutputConfig(BaseModel):
     """Output configuration."""
 
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "format": "json",
-            "path": "output/results",
-            "generate_plots": True,
-            "plot_format": "png",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "format": "json",
+                "path": "output/results",
+            }
         }
-    })
+    )
 
     format: str = Field("json", description="Output format (json, csv, text)")
     path: str = Field("output/results", description="Output path prefix")
-    generate_plots: bool = Field(True, description="Generate visualization plots")
-    plot_format: str = Field("png", description="Plot format (png, pdf, svg)")
 
 
 class Config(BaseModel):

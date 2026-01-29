@@ -2,7 +2,7 @@
 
 import statistics
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from rich.console import Console
 from rich.table import Table
@@ -43,7 +43,7 @@ class ResultsAnalyzer:
         Returns:
             List of ProviderMetrics sorted by average latency (fastest first)
         """
-        provider_data = {}
+        provider_data: dict[str, dict[str, Any]] = {}
 
         for result in self.results:
             provider = result["provider"]
@@ -61,7 +61,7 @@ class ResultsAnalyzer:
 
         metrics_list = []
         for provider, data in provider_data.items():
-            latencies = data["latencies"]
+            latencies: List[float] = data["latencies"]
             avg_latency = statistics.mean(latencies)
             median_latency = statistics.median(latencies)
             success_rate = (data["success_count"] / data["total_count"]) * 100

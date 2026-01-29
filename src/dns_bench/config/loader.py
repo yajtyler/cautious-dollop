@@ -36,9 +36,7 @@ class ConfigLoader:
             elif config_path.endswith(".json"):
                 data = json.load(f)
             else:
-                raise ValueError(
-                    f"Unsupported config format. Use .yaml, .yml, or .json"
-                )
+                raise ValueError("Unsupported config format. Use .yaml, .yml, or .json")
 
         if data is None:
             data = {}

@@ -1,7 +1,6 @@
 """Tests for results analysis and display module."""
 
 from io import StringIO
-from unittest.mock import MagicMock
 
 from rich.console import Console
 
@@ -449,7 +448,10 @@ class TestDisplayResults:
         display_results(results, console=console)
 
         output = string_io.getvalue()
-        assert "Fastest provider: 1.1.1.1" in output or "1.1.1.1" in output.split("Fastest")[1].split("\n")[0]
+        assert (
+            "Fastest provider: 1.1.1.1" in output
+            or "1.1.1.1" in output.split("Fastest")[1].split("\n")[0]
+        )
 
     def test_display_results_identifies_most_reliable(self):
         """Test that most reliable provider is correctly identified."""
@@ -489,7 +491,10 @@ class TestDisplayResults:
         display_results(results, console=console)
 
         output = string_io.getvalue()
-        assert "Most reliable provider: 1.1.1.1" in output or "1.1.1.1" in output.split("Most reliable")[1].split("\n")[0]
+        assert (
+            "Most reliable provider: 1.1.1.1" in output
+            or "1.1.1.1" in output.split("Most reliable")[1].split("\n")[0]
+        )
 
     def test_display_results_contains_required_columns(self):
         """Test that table contains all required columns."""
