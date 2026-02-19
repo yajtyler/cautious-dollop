@@ -2,10 +2,12 @@
 
 import statistics
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from rich.console import Console
 from rich.table import Table
+
+from dns_bench.benchmark import BenchmarkResult
 
 
 @dataclass
@@ -27,12 +29,12 @@ class ResultsAnalyzer:
     median latency, success rate, and sample count for each provider.
     """
 
-    def __init__(self, results: List[dict]) -> None:
+    def __init__(self, results: List[BenchmarkResult]) -> None:
         """
         Initialize ResultsAnalyzer with raw benchmark results.
 
         Args:
-            results: List of benchmark result dictionaries from BenchmarkRunner
+            results: List of benchmark results from BenchmarkRunner
         """
         self.results = results
 
@@ -43,10 +45,10 @@ class ResultsAnalyzer:
         Returns:
             List of ProviderMetrics sorted by average latency (fastest first)
         """
-        provider_data = {}
+        provider_data: Dict[str, Dict[str, Any]] = {}
 
         for result in self.results:
-            provider = result["provider"]
+            provider = result.provider
             if provider not in provider_data:
                 provider_data[provider] = {
                     "latencies": [],
@@ -54,14 +56,14 @@ class ResultsAnalyzer:
                     "total_count": 0,
                 }
 
-            provider_data[provider]["latencies"].append(result["latency_ms"])
+            provider_data[provider]["latencies"].append(result.latency_ms)
             provider_data[provider]["total_count"] += 1
-            if result["success"]:
+            if result.success:
                 provider_data[provider]["success_count"] += 1
 
         metrics_list = []
         for provider, data in provider_data.items():
-            latencies = data["latencies"]
+            latencies: List[float] = data["latencies"]
             avg_latency = statistics.mean(latencies)
             median_latency = statistics.median(latencies)
             success_rate = (data["success_count"] / data["total_count"]) * 100
@@ -80,7 +82,7 @@ class ResultsAnalyzer:
         return metrics_list
 
 
-def display_results(results: List[dict], console: Optional[Console] = None) -> None:
+def display_results(results: List[BenchmarkResult], console: Optional[Console] = None) -> None:
     """
     Display benchmark results in a formatted table with summary.
 
