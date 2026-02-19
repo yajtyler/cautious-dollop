@@ -2,6 +2,7 @@
 
 import time
 import concurrent.futures
+import threading
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -48,6 +49,25 @@ class BenchmarkRunner:
         self.domains = domains
         self.timeout = timeout
         self.iterations = iterations
+        self._local = threading.local()
+
+    def _get_resolver(self, provider_ip: str) -> dns.resolver.Resolver:
+        """Get or create a thread-local resolver for the provider."""
+        if not hasattr(self._local, "resolvers"):
+            self._local.resolvers = {}
+
+        if provider_ip not in self._local.resolvers:
+            # Initialize resolver with configure=False to skip reading system configuration
+            # (e.g. /etc/resolv.conf) for performance. We set nameservers manually.
+            resolver = dns.resolver.Resolver(configure=False)
+            resolver.nameservers = [provider_ip]
+            resolver.timeout = self.timeout
+            resolver.lifetime = self.timeout
+            # Disable caching to ensure we always hit the network (simulating fresh queries)
+            resolver.cache = None
+            self._local.resolvers[provider_ip] = resolver
+
+        return self._local.resolvers[provider_ip]
 
     def _query_dns(self, provider_ip: str, domain: str) -> tuple[float, bool, Optional[str]]:
         """
@@ -63,12 +83,7 @@ class BenchmarkRunner:
             - success: True if query succeeded, False otherwise
             - error_message: Error message if query failed, None if successful
         """
-        # Initialize resolver with configure=False to skip reading system configuration
-        # (e.g. /etc/resolv.conf) for performance. We set nameservers manually.
-        resolver = dns.resolver.Resolver(configure=False)
-        resolver.nameservers = [provider_ip]
-        resolver.timeout = self.timeout
-        resolver.lifetime = self.timeout
+        resolver = self._get_resolver(provider_ip)
 
         start_time = time.time()
         try:
