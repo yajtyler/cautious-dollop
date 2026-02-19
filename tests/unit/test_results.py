@@ -1,10 +1,10 @@
 """Tests for results analysis and display module."""
 
 from io import StringIO
-from unittest.mock import MagicMock
 
 from rich.console import Console
 
+from dns_bench.benchmark import BenchmarkResult
 from dns_bench.results import ProviderMetrics, ResultsAnalyzer, display_results
 
 
@@ -33,13 +33,13 @@ class TestResultsAnalyzer:
     def test_analyzer_initialization(self):
         """Test initializing analyzer with results."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
         analyzer = ResultsAnalyzer(results)
         assert analyzer.results == results
@@ -47,13 +47,13 @@ class TestResultsAnalyzer:
     def test_analyze_single_provider_single_result(self):
         """Test analyzing single result for one provider."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -68,27 +68,27 @@ class TestResultsAnalyzer:
     def test_analyze_single_provider_multiple_results(self):
         """Test analyzing multiple results for one provider."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 40.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "github.com",
-                "latency_ms": 50.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "example.com",
-                "latency_ms": 60.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=40.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="github.com",
+                latency_ms=50.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="example.com",
+                latency_ms=60.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -103,20 +103,20 @@ class TestResultsAnalyzer:
     def test_analyze_multiple_providers(self):
         """Test analyzing results for multiple providers."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 35.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=35.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -129,27 +129,27 @@ class TestResultsAnalyzer:
     def test_analyze_sorted_by_latency(self):
         """Test that results are sorted by average latency (fastest first)."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 60.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "9.9.9.9",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=60.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="9.9.9.9",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -164,20 +164,20 @@ class TestResultsAnalyzer:
     def test_analyze_with_failures(self):
         """Test analyzing results with failures."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "invalid.test",
-                "latency_ms": 5000.0,
-                "success": False,
-                "error": "Timeout",
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="invalid.test",
+                latency_ms=5000.0,
+                success=False,
+                error="Timeout",
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -191,20 +191,20 @@ class TestResultsAnalyzer:
     def test_analyze_all_failures(self):
         """Test analyzing results with all failures."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "invalid1.test",
-                "latency_ms": 5000.0,
-                "success": False,
-                "error": "Timeout",
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "invalid2.test",
-                "latency_ms": 5000.0,
-                "success": False,
-                "error": "Timeout",
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="invalid1.test",
+                latency_ms=5000.0,
+                success=False,
+                error="Timeout",
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="invalid2.test",
+                latency_ms=5000.0,
+                success=False,
+                error="Timeout",
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -218,27 +218,27 @@ class TestResultsAnalyzer:
     def test_analyze_median_calculation_odd_count(self):
         """Test median calculation with odd number of results."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "test1.com",
-                "latency_ms": 10.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "test2.com",
-                "latency_ms": 50.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "test3.com",
-                "latency_ms": 90.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test1.com",
+                latency_ms=10.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test2.com",
+                latency_ms=50.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test3.com",
+                latency_ms=90.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -248,34 +248,34 @@ class TestResultsAnalyzer:
     def test_analyze_median_calculation_even_count(self):
         """Test median calculation with even number of results."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "test1.com",
-                "latency_ms": 10.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "test2.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "test3.com",
-                "latency_ms": 70.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "test4.com",
-                "latency_ms": 90.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test1.com",
+                latency_ms=10.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test2.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test3.com",
+                latency_ms=70.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="test4.com",
+                latency_ms=90.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -285,48 +285,48 @@ class TestResultsAnalyzer:
     def test_analyze_complex_scenario(self):
         """Test analyzing complex scenario with multiple providers and mixed results."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 40.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "github.com",
-                "latency_ms": 50.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "invalid.test",
-                "latency_ms": 5000.0,
-                "success": False,
-                "error": "Timeout",
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 25.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "github.com",
-                "latency_ms": 35.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "example.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=40.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="github.com",
+                latency_ms=50.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="invalid.test",
+                latency_ms=5000.0,
+                success=False,
+                error="Timeout",
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=25.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="github.com",
+                latency_ms=35.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="example.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
         ]
         analyzer = ResultsAnalyzer(results)
         metrics = analyzer.analyze()
@@ -362,13 +362,13 @@ class TestDisplayResults:
     def test_display_results_single_provider(self):
         """Test displaying results for single provider."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True)
@@ -386,20 +386,20 @@ class TestDisplayResults:
     def test_display_results_multiple_providers(self):
         """Test displaying results for multiple providers."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 60.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=60.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
         ]
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True)
@@ -414,13 +414,13 @@ class TestDisplayResults:
     def test_display_results_default_console(self):
         """Test displaying results with default console."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
 
         display_results(results)
@@ -428,20 +428,20 @@ class TestDisplayResults:
     def test_display_results_identifies_fastest(self):
         """Test that fastest provider is correctly identified."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 60.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=60.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
         ]
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True)
@@ -449,39 +449,42 @@ class TestDisplayResults:
         display_results(results, console=console)
 
         output = string_io.getvalue()
-        assert "Fastest provider: 1.1.1.1" in output or "1.1.1.1" in output.split("Fastest")[1].split("\n")[0]
+        assert (
+            "Fastest provider: 1.1.1.1" in output
+            or "1.1.1.1" in output.split("Fastest")[1].split("\n")[0]
+        )
 
     def test_display_results_identifies_most_reliable(self):
         """Test that most reliable provider is correctly identified."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 30.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "8.8.8.8",
-                "domain": "github.com",
-                "latency_ms": 5000.0,
-                "success": False,
-                "error": "Timeout",
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "google.com",
-                "latency_ms": 40.0,
-                "success": True,
-                "error": None,
-            },
-            {
-                "provider": "1.1.1.1",
-                "domain": "github.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            },
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=30.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="github.com",
+                latency_ms=5000.0,
+                success=False,
+                error="Timeout",
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="google.com",
+                latency_ms=40.0,
+                success=True,
+                error=None,
+            ),
+            BenchmarkResult(
+                provider="1.1.1.1",
+                domain="github.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            ),
         ]
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True)
@@ -489,18 +492,21 @@ class TestDisplayResults:
         display_results(results, console=console)
 
         output = string_io.getvalue()
-        assert "Most reliable provider: 1.1.1.1" in output or "1.1.1.1" in output.split("Most reliable")[1].split("\n")[0]
+        assert (
+            "Most reliable provider: 1.1.1.1" in output
+            or "1.1.1.1" in output.split("Most reliable")[1].split("\n")[0]
+        )
 
     def test_display_results_contains_required_columns(self):
         """Test that table contains all required columns."""
         results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True)

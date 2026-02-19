@@ -2,7 +2,7 @@
 
 import time
 import concurrent.futures
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import List, Optional
 
 import dns.rdatatype
@@ -94,17 +94,12 @@ class BenchmarkRunner:
             latency_ms = (time.time() - start_time) * 1000
             return latency_ms, False, f"Error: {str(e)}"
 
-    def run(self) -> List[dict]:
+    def run(self) -> List[BenchmarkResult]:
         """
         Run benchmarks for all provider + domain combinations.
 
         Returns:
-            List of benchmark results as dictionaries with keys:
-            - provider: DNS provider IP address
-            - domain: Domain name queried
-            - latency_ms: Query latency in milliseconds
-            - success: True if query succeeded, False otherwise
-            - error: Error message (None if successful)
+            List of BenchmarkResult objects containing performance metrics.
         """
         results: List[BenchmarkResult] = []
 
@@ -138,7 +133,7 @@ class BenchmarkRunner:
                     )
                     results.append(result)
 
-        return [asdict(result) for result in results]
+        return results
 
 
 def run_benchmark(
@@ -146,7 +141,7 @@ def run_benchmark(
     domains: List[str],
     timeout: float = 5.0,
     iterations: int = 1,
-) -> List[dict]:
+) -> List[BenchmarkResult]:
     """
     Convenience function to run benchmarks.
 
@@ -157,7 +152,7 @@ def run_benchmark(
         iterations: Number of times to query each provider+domain (default: 1)
 
     Returns:
-        List of benchmark results as dictionaries
+        List of BenchmarkResult objects
     """
     runner = BenchmarkRunner(
         providers=providers,

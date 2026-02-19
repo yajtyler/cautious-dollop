@@ -208,10 +208,10 @@ class TestBenchmarkRunner:
         results = runner.run()
 
         assert len(results) == 1
-        assert results[0]["provider"] == "8.8.8.8"
-        assert results[0]["domain"] == "google.com"
-        assert results[0]["success"] is True
-        assert results[0]["error"] is None
+        assert results[0].provider == "8.8.8.8"
+        assert results[0].domain == "google.com"
+        assert results[0].success is True
+        assert results[0].error is None
 
     @patch("dns_bench.benchmark.dns.resolver.Resolver")
     def test_run_multiple_providers(self, mock_resolver_class):
@@ -232,7 +232,7 @@ class TestBenchmarkRunner:
         results = runner.run()
 
         assert len(results) == 2
-        providers_in_results = {r["provider"] for r in results}
+        providers_in_results = {r.provider for r in results}
         assert "8.8.8.8" in providers_in_results
         assert "1.1.1.1" in providers_in_results
 
@@ -255,7 +255,7 @@ class TestBenchmarkRunner:
         results = runner.run()
 
         assert len(results) == 2
-        domains_in_results = {r["domain"] for r in results}
+        domains_in_results = {r.domain for r in results}
         assert "google.com" in domains_in_results
         assert "github.com" in domains_in_results
 
@@ -279,8 +279,8 @@ class TestBenchmarkRunner:
 
         assert len(results) == 3
         for result in results:
-            assert result["provider"] == "8.8.8.8"
-            assert result["domain"] == "google.com"
+            assert result.provider == "8.8.8.8"
+            assert result.domain == "google.com"
 
     @patch("dns_bench.benchmark.dns.resolver.Resolver")
     def test_run_complex_scenario(self, mock_resolver_class):
@@ -304,10 +304,10 @@ class TestBenchmarkRunner:
         assert len(results) == expected_count
 
         for result in results:
-            assert result["provider"] in ["8.8.8.8", "1.1.1.1"]
-            assert result["domain"] in ["google.com", "github.com"]
-            assert isinstance(result["latency_ms"], float)
-            assert isinstance(result["success"], bool)
+            assert result.provider in ["8.8.8.8", "1.1.1.1"]
+            assert result.domain in ["google.com", "github.com"]
+            assert isinstance(result.latency_ms, float)
+            assert isinstance(result.success, bool)
 
     @patch("dns_bench.benchmark.dns.resolver.Resolver")
     def test_run_mixed_success_failure(self, mock_resolver_class):
@@ -333,8 +333,8 @@ class TestBenchmarkRunner:
 
         results = runner.run()
 
-        success_count = sum(1 for r in results if r["success"])
-        failure_count = sum(1 for r in results if not r["success"])
+        success_count = sum(1 for r in results if r.success)
+        failure_count = sum(1 for r in results if not r.success)
 
         assert success_count >= 1
         assert failure_count >= 1
@@ -347,13 +347,13 @@ class TestRunBenchmarkFunction:
     def test_run_benchmark_function(self, mock_run):
         """Test run_benchmark convenience function."""
         expected_results = [
-            {
-                "provider": "8.8.8.8",
-                "domain": "google.com",
-                "latency_ms": 45.0,
-                "success": True,
-                "error": None,
-            }
+            BenchmarkResult(
+                provider="8.8.8.8",
+                domain="google.com",
+                latency_ms=45.0,
+                success=True,
+                error=None,
+            )
         ]
         mock_run.return_value = expected_results
 
