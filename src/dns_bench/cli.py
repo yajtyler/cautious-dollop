@@ -100,6 +100,12 @@ def version(ctx: click.Context) -> None:
     default=5.0,
     help="Query timeout in seconds",
 )
+@click.option(
+    "--threads",
+    type=int,
+    default=None,
+    help="Number of concurrent worker threads",
+)
 @click.pass_context
 def run(
     ctx: click.Context,
@@ -107,6 +113,7 @@ def run(
     domains: tuple,
     iterations: int,
     timeout: float,
+    threads: int,
 ) -> None:
     """Run DNS benchmarks."""
     ctx_obj = ctx.obj or {}
@@ -124,10 +131,19 @@ def run(
             console.print("[bold red]Error:[/bold red] No providers or domains specified")
             raise click.Exit(code=1)  # type: ignore
 
+    config = ctx_obj.get("config")
+
+    if threads is None:
+        if config:
+            threads = config.benchmark.concurrent_queries
+        else:
+            threads = 100
+
     if verbose:
         console.print(
             f"[cyan]Running benchmark with {len(providers_list)} provider(s) "
-            f"and {len(domains_list)} domain(s), {iterations} iteration(s) each[/cyan]"
+            f"and {len(domains_list)} domain(s), {iterations} iteration(s) each "
+            f"using {threads} threads[/cyan]"
         )
 
     try:
@@ -136,6 +152,7 @@ def run(
             domains=domains_list,
             timeout=timeout,
             iterations=iterations,
+            max_workers=threads,
         )
 
         if results:

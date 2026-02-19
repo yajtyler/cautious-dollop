@@ -55,12 +55,14 @@ class TestBenchmarkRunner:
             domains=domains,
             timeout=5.0,
             iterations=2,
+            max_workers=50,
         )
 
         assert runner.providers == providers
         assert runner.domains == domains
         assert runner.timeout == 5.0
         assert runner.iterations == 2
+        assert runner.max_workers == 50
 
     def test_benchmark_runner_default_timeout(self):
         """Test default timeout value."""
@@ -392,6 +394,7 @@ class TestRunBenchmarkFunction:
             domains=["google.com", "github.com"],
             timeout=3.0,
             iterations=5,
+            max_workers=50,
         )
 
         mock_runner_class.assert_called_once_with(
@@ -399,5 +402,6 @@ class TestRunBenchmarkFunction:
             domains=["google.com", "github.com"],
             timeout=3.0,
             iterations=5,
+            max_workers=50,
         )
         mock_runner.run.assert_called_once()

@@ -34,6 +34,7 @@ class BenchmarkRunner:
         domains: List[str],
         timeout: float = 5.0,
         iterations: int = 1,
+        max_workers: int = 20,
     ) -> None:
         """
         Initialize BenchmarkRunner.
@@ -43,11 +44,13 @@ class BenchmarkRunner:
             domains: List of domain names to query
             timeout: Query timeout in seconds (default: 5.0)
             iterations: Number of times to query each provider+domain (default: 1)
+            max_workers: Maximum number of concurrent worker threads (default: 20)
         """
         self.providers = providers
         self.domains = domains
         self.timeout = timeout
         self.iterations = iterations
+        self.max_workers = max_workers
 
     def _query_dns(self, provider_ip: str, domain: str) -> tuple[float, bool, Optional[str]]:
         """
@@ -108,7 +111,7 @@ class BenchmarkRunner:
         """
         results: List[BenchmarkResult] = []
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             future_to_meta = {}
             for provider in self.providers:
                 for domain in self.domains:
@@ -146,6 +149,7 @@ def run_benchmark(
     domains: List[str],
     timeout: float = 5.0,
     iterations: int = 1,
+    max_workers: int = 20,
 ) -> List[dict]:
     """
     Convenience function to run benchmarks.
@@ -155,6 +159,7 @@ def run_benchmark(
         domains: List of domain names to query
         timeout: Query timeout in seconds (default: 5.0)
         iterations: Number of times to query each provider+domain (default: 1)
+        max_workers: Maximum number of concurrent worker threads (default: 20)
 
     Returns:
         List of benchmark results as dictionaries
@@ -164,5 +169,6 @@ def run_benchmark(
         domains=domains,
         timeout=timeout,
         iterations=iterations,
+        max_workers=max_workers,
     )
     return runner.run()

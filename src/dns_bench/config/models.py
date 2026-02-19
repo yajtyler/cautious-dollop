@@ -54,7 +54,7 @@ class BenchmarkConfig(BaseModel):
 
     timeout: float = Field(5.0, description="Query timeout in seconds")
     retries: int = Field(1, description="Number of retries per query")
-    concurrent_queries: int = Field(10, description="Number of concurrent queries")
+    concurrent_queries: int = Field(100, description="Number of concurrent queries")
     iterations: int = Field(10, description="Number of iterations per domain per provider")
 
 
