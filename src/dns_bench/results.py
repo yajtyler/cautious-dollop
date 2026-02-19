@@ -1,8 +1,9 @@
 """Results analysis and display module for DNS benchmarks."""
 
-import statistics
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
+
+import pandas as pd
 
 from rich.console import Console
 from rich.table import Table
@@ -45,36 +46,32 @@ class ResultsAnalyzer:
         Returns:
             List of ProviderMetrics sorted by average latency (fastest first)
         """
-        provider_data: Dict[str, Dict[str, Any]] = {}
+        if not self.results:
+            return []
 
-        for result in self.results:
-            provider = result.provider
-            if provider not in provider_data:
-                provider_data[provider] = {
-                    "latencies": [],
-                    "success_count": 0,
-                    "total_count": 0,
-                }
+        df = pd.DataFrame(
+            {
+                "provider": [r.provider for r in self.results],
+                "latency_ms": [r.latency_ms for r in self.results],
+                "success": [r.success for r in self.results],
+            }
+        )
 
-            provider_data[provider]["latencies"].append(result.latency_ms)
-            provider_data[provider]["total_count"] += 1
-            if result.success:
-                provider_data[provider]["success_count"] += 1
+        grouped = df.groupby("provider").agg(
+            avg_latency=("latency_ms", "mean"),
+            median_latency=("latency_ms", "median"),
+            success_count=("success", "sum"),
+            total_count=("success", "count"),
+        )
 
         metrics_list = []
-        for provider, data in provider_data.items():
-            latencies: List[float] = data["latencies"]
-            avg_latency = statistics.mean(latencies)
-            median_latency = statistics.median(latencies)
-            success_rate = (data["success_count"] / data["total_count"]) * 100
-            sample_count = data["total_count"]
-
+        for provider, row in grouped.iterrows():
             metrics = ProviderMetrics(
-                provider=provider,
-                avg_latency=avg_latency,
-                median_latency=median_latency,
-                success_rate=success_rate,
-                sample_count=sample_count,
+                provider=str(provider),
+                avg_latency=float(row["avg_latency"]),
+                median_latency=float(row["median_latency"]),
+                success_rate=(row["success_count"] / row["total_count"]) * 100,
+                sample_count=int(row["total_count"]),
             )
             metrics_list.append(metrics)
 
