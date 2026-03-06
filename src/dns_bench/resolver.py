@@ -5,7 +5,7 @@ import re
 import subprocess
 from ipaddress import AddressValueError, IPv4Address, IPv6Address
 from pathlib import Path
-from typing import List, Set
+from typing import List
 
 
 def _is_valid_ip(ip: str) -> bool:
@@ -142,15 +142,7 @@ def _deduplicate_resolvers(resolvers: List[str]) -> List[str]:
     Returns:
         List of unique IP addresses in original order
     """
-    seen: Set[str] = set()
-    unique_resolvers = []
-
-    for resolver in resolvers:
-        if resolver not in seen:
-            seen.add(resolver)
-            unique_resolvers.append(resolver)
-
-    return unique_resolvers
+    return list(dict.fromkeys(resolvers))
 
 
 def get_local_resolvers() -> List[str]:
