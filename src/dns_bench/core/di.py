@@ -56,9 +56,7 @@ class ServiceContainer:
             if self._singletons[name] is None:
                 service_factory = self._services[name]
                 self._singletons[name] = (
-                    service_factory()
-                    if callable(service_factory)
-                    else service_factory
+                    service_factory() if callable(service_factory) else service_factory
                 )
             return self._singletons[name]
 

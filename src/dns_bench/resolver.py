@@ -7,6 +7,8 @@ from ipaddress import AddressValueError, IPv4Address, IPv6Address
 from pathlib import Path
 from typing import List, Set
 
+_WINDOWS_DNS_PATTERN = re.compile(r"DNS Servers.*?:\s*(.+)", re.IGNORECASE)
+
 
 def _is_valid_ip(ip: str) -> bool:
     """
@@ -112,10 +114,8 @@ def _parse_windows_resolvers() -> List[str]:
         )
 
         if result.returncode == 0:
-            dns_pattern = re.compile(r"DNS Servers.*?:\s*(.+)", re.IGNORECASE)
-
             for line in result.stdout.splitlines():
-                match = dns_pattern.search(line)
+                match = _WINDOWS_DNS_PATTERN.search(line)
                 if match:
                     ip = match.group(1).strip()
                     if _is_valid_ip(ip):
