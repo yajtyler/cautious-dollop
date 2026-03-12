@@ -70,28 +70,28 @@ class BenchmarkRunner:
         resolver.timeout = self.timeout
         resolver.lifetime = self.timeout
 
-        start_time = time.time()
+        start_time = time.perf_counter()
         try:
             resolver.resolve(domain, dns.rdatatype.A)
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, True, None
         except dns.resolver.NXDOMAIN:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, "NXDOMAIN: Domain does not exist"
         except dns.resolver.NoAnswer:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, "NoAnswer: No A record found"
         except dns.exception.Timeout:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, "Timeout: Query exceeded time limit"
         except dns.resolver.NoNameservers:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, "NoNameservers: Unable to reach nameserver"
         except dns.exception.DNSException as e:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, f"DNSException: {str(e)}"
         except Exception as e:
-            latency_ms = (time.time() - start_time) * 1000
+            latency_ms = (time.perf_counter() - start_time) * 1000
             return latency_ms, False, f"Error: {str(e)}"
 
     def run(self) -> List[BenchmarkResult]:
