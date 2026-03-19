@@ -3,7 +3,7 @@
 import platform
 import re
 import subprocess
-from ipaddress import AddressValueError, IPv4Address, IPv6Address
+from ipaddress import AddressValueError, ip_address
 from pathlib import Path
 from typing import List, Set
 
@@ -21,18 +21,10 @@ def _is_valid_ip(ip: str) -> bool:
         True if valid IP address, False otherwise
     """
     try:
-        IPv4Address(ip)
+        ip_address(ip)
         return True
     except (AddressValueError, ValueError):
-        pass
-
-    try:
-        IPv6Address(ip)
-        return True
-    except (AddressValueError, ValueError):
-        pass
-
-    return False
+        return False
 
 
 def _parse_linux_resolvers() -> List[str]:
