@@ -112,12 +112,16 @@ def _parse_windows_resolvers() -> List[str]:
                     ip = match.group(1).strip()
                     if _is_valid_ip(ip):
                         resolvers.append(ip)
-                elif line.strip() and not line.startswith(" ") and ":" not in line:
-                    continue
-                elif line.strip() and resolvers:
-                    ip = line.strip()
-                    if _is_valid_ip(ip):
-                        resolvers.append(ip)
+                else:
+                    stripped_line = line.strip()
+                    if not stripped_line:
+                        continue
+                    if not line.startswith(" ") and ":" not in line:
+                        continue
+                    if resolvers:
+                        ip = stripped_line
+                        if _is_valid_ip(ip):
+                            resolvers.append(ip)
     except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError):
         pass
 
