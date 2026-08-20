@@ -49,12 +49,9 @@ class ResultsAnalyzer:
         if not self.results:
             return []
 
-        df = pd.DataFrame(
-            {
-                "provider": [r.provider for r in self.results],
-                "latency_ms": [r.latency_ms for r in self.results],
-                "success": [r.success for r in self.results],
-            }
+        df = pd.DataFrame.from_records(
+            [(r.provider, r.latency_ms, r.success) for r in self.results],
+            columns=["provider", "latency_ms", "success"]
         )
 
         grouped = df.groupby("provider").agg(
