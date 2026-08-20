@@ -49,19 +49,20 @@ class ServiceContainer:
         Raises:
             KeyError: If service not registered
         """
-        if name not in self._services:
+        service_factory = self._services.get(name)
+        if service_factory is None and name not in self._services:
             raise KeyError(f"Service '{name}' not registered in container")
 
         if name in self._singletons:
-            if self._singletons[name] is None:
-                service_factory = self._services[name]
-                self._singletons[name] = (
+            singleton_instance = self._singletons[name]
+            if singleton_instance is None:
+                singleton_instance = (
                     service_factory() if callable(service_factory) else service_factory
                 )
-            return self._singletons[name]
+                self._singletons[name] = singleton_instance
+            return singleton_instance
 
-        service = self._services[name]
-        return service() if callable(service) else service
+        return service_factory() if callable(service_factory) else service_factory
 
     def has(self, name: str) -> bool:
         """
