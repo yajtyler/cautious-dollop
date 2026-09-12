@@ -233,6 +233,20 @@ class TestDeduplication:
         deduplicated = _deduplicate_resolvers(resolvers)
         assert deduplicated == []
 
+    def test_query_dns_invalid_ip(self):
+        """Test query_dns with invalid IP address."""
+        from unittest.mock import MagicMock
+        import sys
+        mock_dns = MagicMock()
+        with patch.dict(sys.modules, {"dns": mock_dns, "dns.rdatatype": mock_dns, "dns.resolver": mock_dns, "dns.exception": mock_dns}):
+            from dns_bench.benchmark import BenchmarkRunner
+
+            runner = BenchmarkRunner(providers=["invalid_ip"], domains=["google.com"])
+            latency, success, error = runner._query_dns("invalid_ip", "google.com")
+            assert success is False
+            assert latency == 0.0
+            assert "Invalid provider IP address" in error
+
     def test_deduplicate_resolvers_preserves_order(self):
         """Test that deduplication preserves original order."""
         resolvers = ["3.3.3.3", "1.1.1.1", "2.2.2.2", "1.1.1.1"]

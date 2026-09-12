@@ -4,6 +4,7 @@ import time
 import concurrent.futures
 import threading
 from dataclasses import dataclass
+from ipaddress import AddressValueError, ip_address
 from typing import List, Optional
 
 import dns.rdatatype
@@ -83,6 +84,12 @@ class BenchmarkRunner:
             - success: True if query succeeded, False otherwise
             - error_message: Error message if query failed, None if successful
         """
+        # Validate provider IP address before attempting resolution
+        try:
+            ip_address(provider_ip)
+        except (AddressValueError, ValueError):
+            return 0.0, False, f"Invalid provider IP address: {provider_ip}"
+
         resolver = self._get_resolver(provider_ip)
 
         start_time = time.perf_counter()
