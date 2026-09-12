@@ -3,8 +3,6 @@
 from unittest.mock import MagicMock, mock_open, patch
 import subprocess
 
-import pytest
-
 from dns_bench.resolver import (
     _deduplicate_resolvers,
     _is_valid_ip,
@@ -237,8 +235,17 @@ class TestDeduplication:
         """Test query_dns with invalid IP address."""
         from unittest.mock import MagicMock
         import sys
+
         mock_dns = MagicMock()
-        with patch.dict(sys.modules, {"dns": mock_dns, "dns.rdatatype": mock_dns, "dns.resolver": mock_dns, "dns.exception": mock_dns}):
+        with patch.dict(
+            sys.modules,
+            {
+                "dns": mock_dns,
+                "dns.rdatatype": mock_dns,
+                "dns.resolver": mock_dns,
+                "dns.exception": mock_dns,
+            },
+        ):
             from dns_bench.benchmark import BenchmarkRunner
 
             runner = BenchmarkRunner(providers=["invalid_ip"], domains=["google.com"])

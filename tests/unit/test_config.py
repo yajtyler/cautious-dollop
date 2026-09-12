@@ -1,17 +1,12 @@
 """Tests for configuration module."""
 
-import pytest
-
-from dns_bench.config.models import Config, DNSProvider, Domain, BenchmarkConfig
+from dns_bench.config.models import Config, DNSProvider, Domain
 
 
 def test_dns_provider_creation():
     """Test creating a DNS provider."""
     provider = DNSProvider(
-        name="Google",
-        primary_ip="8.8.8.8",
-        secondary_ip="8.8.4.4",
-        category="public"
+        name="Google", primary_ip="8.8.8.8", secondary_ip="8.8.4.4", category="public"
     )
     assert provider.name == "Google"
     assert provider.primary_ip == "8.8.8.8"
@@ -20,11 +15,7 @@ def test_dns_provider_creation():
 
 def test_domain_creation():
     """Test creating a domain."""
-    domain = Domain(
-        name="example.com",
-        category="general",
-        record_type="A"
-    )
+    domain = Domain(name="example.com", category="general", record_type="A")
     assert domain.name == "example.com"
     assert domain.category == "general"
     assert domain.record_type == "A"
@@ -48,10 +39,7 @@ def test_config_with_providers_and_domains():
     )
     domain = Domain(name="example.com")
 
-    config = Config(
-        providers=[provider],
-        domains=[domain]
-    )
+    config = Config(providers=[provider], domains=[domain])
 
     assert len(config.providers) == 1
     assert len(config.domains) == 1

@@ -6,12 +6,13 @@ A comprehensive DNS resolver benchmarking tool with support for multiple provide
 
 - **Multi-Provider Support**: Benchmark against multiple DNS providers (Google, Cloudflare, Quad9, OpenDNS, Verisign, and custom)
 - **Domain Pool Management**: Configure domain categories for realistic benchmarking scenarios
-- **Concurrent Execution**: Efficient async/concurrent query execution
+- **Concurrent Execution**: Thread-pool based concurrent query execution
+- **Local Resolver Detection**: Cross-platform system DNS resolver auto-detection (Linux, macOS, Windows)
 - **Data Analysis**: Pandas-based result analysis and aggregation
-- **Visualizations**: matplotlib and plotext for result visualization
-- **CLI Interface**: Rich, user-friendly command-line interface with Typer
+- **Formatted Results**: Rich table and performance summary output
+- **CLI Interface**: Command-line interface built with Click and Rich
 - **Configuration Management**: YAML/JSON configuration support
-- **Testing**: Comprehensive test suite with pytest
+- **Testing**: Test suite with pytest
 
 ## Project Structure
 
@@ -22,6 +23,9 @@ dns-bench/
 │       ├── __init__.py
 │       ├── __main__.py
 │       ├── cli.py                 # CLI entry point
+│       ├── benchmark.py           # Benchmark runner and query logic
+│       ├── resolver.py            # System resolver detection
+│       ├── results.py             # Results analyzer and Rich table formatter
 │       ├── config/
 │       │   ├── __init__.py
 │       │   ├── models.py          # Configuration data models
@@ -34,7 +38,8 @@ dns-bench/
 │   └── config.example.json        # Example JSON configuration
 ├── tests/
 │   ├── unit/                      # Unit tests
-│   └── integration/               # Integration tests
+│   ├── integration/               # Integration tests
+│   └── performance/               # Performance benchmark scripts
 ├── pyproject.toml                 # Poetry project configuration
 └── README.md
 ```
@@ -57,7 +62,7 @@ poetry install
 2. Verify installation:
 
 ```bash
-python -m dns_bench --help
+poetry run dns-bench --help
 ```
 
 ## Configuration
@@ -109,6 +114,46 @@ Pre-configured domain categories:
 - **CDN**: cloudflare.com
 - **Streaming**: netflix.com, youtube.com
 
+## Usage
+
+### Display Help
+
+```bash
+poetry run dns-bench --help
+```
+
+### Display Version
+
+```bash
+poetry run dns-bench version
+```
+
+### Run Benchmarks
+
+Run benchmark using providers and domains from default configuration:
+
+```bash
+poetry run dns-bench run
+```
+
+Run benchmark using custom options:
+
+```bash
+poetry run dns-bench run -p 8.8.8.8 -p 1.1.1.1 -d google.com -d github.com --iterations 3 --timeout 5.0
+```
+
+### Custom Configuration
+
+```bash
+poetry run dns-bench -c /path/to/config.yaml run
+```
+
+### Verbose Output
+
+```bash
+poetry run dns-bench -v run
+```
+
 ## Development
 
 ### Running Tests
@@ -131,44 +176,15 @@ The project uses:
 - **flake8**: Linting
 - **mypy**: Type checking
 
-## Usage
-
-### Display Help
-
-```bash
-python -m dns_bench --help
-```
-
-### Display Version
-
-```bash
-python -m dns_bench version
-```
-
-### Custom Configuration
-
-```bash
-python -m dns_bench --config /path/to/config.yaml
-```
-
-### Verbose Output
-
-```bash
-python -m dns_bench --verbose
-```
-
 ## Dependencies
 
 ### Core Dependencies
 
 - **dnspython**: DNS protocol implementation
-- **typer**: Modern CLI framework
-- **rich**: Terminal formatting
-- **aiohttp**: Async HTTP client
+- **click**: Command-line interface framework
+- **rich**: Terminal formatting and tables
 - **pandas**: Data manipulation and analysis
-- **matplotlib**: Plotting library
-- **plotext**: Terminal plotting
-- **pydantic**: Data validation
+- **pydantic**: Data validation and config modeling
 - **pyyaml**: YAML parsing
 
 ### Development Dependencies
