@@ -43,7 +43,7 @@ def _parse_linux_resolvers() -> List[str]:
                 for line in f:
                     line = line.strip()
                     if line.startswith("nameserver"):
-                        parts = line.split()
+                        parts = line.split(None, 2)
                         if len(parts) >= 2:
                             ip = parts[1]
                             if _is_valid_ip(ip):
