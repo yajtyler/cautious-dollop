@@ -116,39 +116,35 @@ class BenchmarkRunner:
         Returns:
             List of BenchmarkResult objects containing performance metrics.
         """
-        results: List[BenchmarkResult] = []
+        def _execute_query(args) -> BenchmarkResult:
+            provider, domain = args
+            try:
+                latency_ms, success, error = self._query_dns(provider, domain)
+                return BenchmarkResult(
+                    provider=provider,
+                    domain=domain,
+                    latency_ms=latency_ms,
+                    success=success,
+                    error=error,
+                )
+            except Exception as exc:
+                return BenchmarkResult(
+                    provider=provider,
+                    domain=domain,
+                    latency_ms=0.0,
+                    success=False,
+                    error=f"Unexpected error: {exc}",
+                )
+
+        tasks = [
+            (provider, domain)
+            for provider in self.providers
+            for domain in self.domains
+            for _ in range(self.iterations)
+        ]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-            future_to_meta = {}
-            for provider in self.providers:
-                for domain in self.domains:
-                    for _ in range(self.iterations):
-                        future = executor.submit(self._query_dns, provider, domain)
-                        future_to_meta[future] = (provider, domain)
-
-            for future in concurrent.futures.as_completed(future_to_meta):
-                provider, domain = future_to_meta[future]
-                try:
-                    latency_ms, success, error = future.result()
-                    result = BenchmarkResult(
-                        provider=provider,
-                        domain=domain,
-                        latency_ms=latency_ms,
-                        success=success,
-                        error=error,
-                    )
-                    results.append(result)
-                except Exception as exc:
-                    result = BenchmarkResult(
-                        provider=provider,
-                        domain=domain,
-                        latency_ms=0.0,
-                        success=False,
-                        error=f"Unexpected error: {exc}",
-                    )
-                    results.append(result)
-
-        return results
+            return list(executor.map(_execute_query, tasks))
 
 
 def run_benchmark(
