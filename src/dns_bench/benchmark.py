@@ -123,6 +123,7 @@ class BenchmarkRunner:
         Returns:
             List of BenchmarkResult objects containing performance metrics.
         """
+
         def _execute_query(args) -> BenchmarkResult:
             provider, domain = args
             try:

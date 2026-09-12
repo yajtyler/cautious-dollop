@@ -8,6 +8,7 @@ try:
 except ImportError:
     pd = None
 
+
 @dataclass
 class BenchmarkResult:
     provider: str
@@ -15,6 +16,7 @@ class BenchmarkResult:
     latency_ms: float
     success: bool
     error: str = None
+
 
 def analyze_original(results: List[BenchmarkResult]):
     df = pd.DataFrame(
@@ -26,14 +28,16 @@ def analyze_original(results: List[BenchmarkResult]):
     )
     return df
 
+
 def analyze_vars(results: List[BenchmarkResult]):
     df = pd.DataFrame([vars(r) for r in results])
     return df
 
+
 def analyze_attrgetter(results: List[BenchmarkResult]):
-    get_provider = operator.attrgetter('provider')
-    get_latency = operator.attrgetter('latency_ms')
-    get_success = operator.attrgetter('success')
+    get_provider = operator.attrgetter("provider")
+    get_latency = operator.attrgetter("latency_ms")
+    get_success = operator.attrgetter("success")
     df = pd.DataFrame(
         {
             "provider": [get_provider(r) for r in results],
@@ -42,6 +46,7 @@ def analyze_attrgetter(results: List[BenchmarkResult]):
         }
     )
     return df
+
 
 def analyze_single_loop_lists(results: List[BenchmarkResult]):
     providers = []
@@ -60,12 +65,14 @@ def analyze_single_loop_lists(results: List[BenchmarkResult]):
     )
     return df
 
+
 def analyze_from_records_tuples(results: List[BenchmarkResult]):
     df = pd.DataFrame.from_records(
         [(r.provider, r.latency_ms, r.success) for r in results],
-        columns=["provider", "latency_ms", "success"]
+        columns=["provider", "latency_ms", "success"],
     )
     return df
+
 
 def run_benchmark():
     if pd is None:
@@ -78,7 +85,7 @@ def run_benchmark():
             provider=f"provider_{i % 10}",
             domain="example.com",
             latency_ms=10.0 + (i % 100),
-            success=True
+            success=True,
         )
         for i in range(count)
     ]
@@ -102,6 +109,7 @@ def run_benchmark():
         end = time.perf_counter()
         avg_time = (end - start) / 10
         print(f"{name:25} avg time: {avg_time:.4f}s")
+
 
 if __name__ == "__main__":
     run_benchmark()

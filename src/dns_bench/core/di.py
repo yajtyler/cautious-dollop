@@ -1,6 +1,6 @@
 """Dependency injection container for DNS Benchmark."""
 
-from typing import Any, Optional
+from typing import Any
 
 from dns_bench.config.models import Config
 

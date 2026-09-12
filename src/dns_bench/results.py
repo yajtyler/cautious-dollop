@@ -51,7 +51,7 @@ class ResultsAnalyzer:
 
         df = pd.DataFrame.from_records(
             [(r.provider, r.latency_ms, r.success) for r in self.results],
-            columns=["provider", "latency_ms", "success"]
+            columns=["provider", "latency_ms", "success"],
         )
 
         grouped = df.groupby("provider").agg(
