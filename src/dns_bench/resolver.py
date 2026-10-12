@@ -141,16 +141,7 @@ def _deduplicate_resolvers(resolvers: List[str]) -> List[str]:
     if len(resolvers) <= 1:
         return list(resolvers)
 
-    # For small resolver lists (typically 1-5 items), manual set tracking and loop
-    # is ~20-55% faster than dictionary creation via dict.fromkeys()
-    seen = set()
-    deduped = []
-    for ip in resolvers:
-        if ip not in seen:
-            seen.add(ip)
-            deduped.append(ip)
-
-    return deduped
+    return list(dict.fromkeys(resolvers))
 
 
 def get_local_resolvers() -> List[str]:
