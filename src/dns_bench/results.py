@@ -61,16 +61,24 @@ class ResultsAnalyzer:
             total_count=("success", "count"),
         )
 
-        metrics_list = []
-        for row in grouped.itertuples():
-            metrics = ProviderMetrics(
-                provider=str(row.Index),
-                avg_latency=float(row.avg_latency),
-                median_latency=float(row.median_latency),
-                success_rate=(row.success_count / row.total_count) * 100,
-                sample_count=int(row.total_count),
+        grouped["success_rate"] = (grouped["success_count"] / grouped["total_count"]) * 100
+
+        metrics_list = [
+            ProviderMetrics(
+                provider=str(idx),
+                avg_latency=float(avg),
+                median_latency=float(med),
+                success_rate=float(rate),
+                sample_count=int(total),
             )
-            metrics_list.append(metrics)
+            for idx, avg, med, rate, total in zip(
+                grouped.index,
+                grouped["avg_latency"],
+                grouped["median_latency"],
+                grouped["success_rate"],
+                grouped["total_count"],
+            )
+        ]
 
         metrics_list.sort(key=lambda m: m.avg_latency)
         return metrics_list
