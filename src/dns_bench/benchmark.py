@@ -51,6 +51,12 @@ class BenchmarkRunner:
         self.timeout = timeout
         self.iterations = iterations
         self._local = threading.local()
+        self._invalid_providers = set()
+        for provider in self.providers:
+            try:
+                ip_address(provider)
+            except (AddressValueError, ValueError):
+                self._invalid_providers.add(provider)
 
     def _get_resolver(self, provider_ip: str) -> dns.resolver.Resolver:
         """Get or create a thread-local resolver for the provider."""
@@ -85,9 +91,7 @@ class BenchmarkRunner:
             - error_message: Error message if query failed, None if successful
         """
         # Validate provider IP address before attempting resolution
-        try:
-            ip_address(provider_ip)
-        except (AddressValueError, ValueError):
+        if provider_ip in self._invalid_providers:
             return 0.0, False, f"Invalid provider IP address: {provider_ip}"
 
         resolver = self._get_resolver(provider_ip)
