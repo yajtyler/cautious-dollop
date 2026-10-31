@@ -151,6 +151,7 @@ class BenchmarkRunner:
         tasks = [
             (provider, domain)
             for provider in self.providers
+            if provider not in self._invalid_providers
             for domain in self.domains
             for _ in range(self.iterations)
         ]
